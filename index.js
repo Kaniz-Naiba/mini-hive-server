@@ -46,7 +46,7 @@ async function addNotification({ message, toEmail, actionRoute = "/" }) {
   }
 
   try {
-    await client.connect();
+    // await client.connect();
     const db = client.db('mini_hive_user');
     const notificationsCollection = db.collection('notifications');
 
@@ -62,7 +62,7 @@ async function addNotification({ message, toEmail, actionRoute = "/" }) {
   } catch (error) {
     console.error("❌ Failed to save notification:", error);
   } finally {
-    await client.close(); // Close the DB connection after use
+    // await client.close(); // Close the DB connection after use
   }
 }
 
