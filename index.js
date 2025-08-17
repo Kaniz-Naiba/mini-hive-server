@@ -46,7 +46,7 @@ async function addNotification({ message, toEmail, actionRoute = "/" }) {
   }
 
   try {
-    // await client.connect();
+    //await client.connect();
     const db = client.db('mini_hive_user');
     const notificationsCollection = db.collection('notifications');
 
@@ -62,7 +62,7 @@ async function addNotification({ message, toEmail, actionRoute = "/" }) {
   } catch (error) {
     console.error("❌ Failed to save notification:", error);
   } finally {
-    // await client.close(); // Close the DB connection after use
+    // await client.close(); 
   }
 }
 
@@ -512,6 +512,32 @@ async function run() {
         res.status(500).json({ message: 'Internal server error' });
       }
     });
+
+// GET /buyer/tasks - fetch all tasks added by the logged-in buyer
+app.get('/buyer/tasks', verifyFBToken, async (req, res) => {
+  try {
+    const buyerEmail = req.decoded.email;
+
+    const tasks = await tasksCollection
+      .find({ buyer_email: buyerEmail })
+      .sort({ createdAt: -1 }) // newest first
+      .toArray();
+
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.error('Error fetching buyer tasks:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+app.get('/api/all-tasks', async (req, res) => {
+  try {
+    const tasks = await tasksCollection.find({}).sort({ createdAt: -1 }).toArray();
+    res.json(tasks);
+  } catch (err) {
+    console.error('Error fetching all tasks:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
     app.get('/buyer/home', verifyFBToken, async (req, res) => {
   const buyerEmail = req.decoded.email;
